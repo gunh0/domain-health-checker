@@ -1,0 +1,10 @@
+google.com
+github.com
+stackoverflow.com
+amazon.com
+facebook.com
+microsoft.com
+apple.com
+invalid-domain-example123.com
+youtube.com
+twitter.com
