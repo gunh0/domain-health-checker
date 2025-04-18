@@ -9,20 +9,32 @@ It performs multiple tests on each domain and generates both visual and text rep
 import sys
 import os
 from datetime import datetime
+import pytz
+import dotenv
 
 # Import modules
 from domain_checker import check_domain_health, read_domains_from_file
 from visualization import generate_plots, generate_text_report
+from visualization.utils import get_korean_time
 
 
 def main():
     """Main function to run the domain health checker."""
+    # Load environment variables
+    dotenv.load_dotenv()
+
+    # Get test count from environment variable or use default
+    test_count = int(os.getenv("TEST_COUNT", 5))
+
     # Display header
     print("===== Domain Health Checker =====")
 
+    # Get current time in Korean timezone
+    current_time = get_korean_time()
+    print(f"Current time (KST): {current_time}")
+
     # Set default values
     file_path = "domains.txt"  # Default file to read domains from
-    test_count = 5
 
     try:
         # Check if the domains file exists
@@ -36,6 +48,7 @@ def main():
         # Read domains from file
         domains = read_domains_from_file(file_path)
         print(f"Loaded {len(domains)} domains from '{file_path}'.")
+        print(f"Test count: {test_count}")
 
         # Check each domain
         results = []

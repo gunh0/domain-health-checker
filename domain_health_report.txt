@@ -1,20 +1,20 @@
 Domain Health Check Report
 ================================================================================
-Date and Time: 2025-04-18 06:04:27
-User: gunh0
+Date and Time: 2025-04-18 18:01:08
 ================================================================================
 
-Total domains: 10
-HTTP status OK: 7 (70.0%)
-HTTPS status OK: 7 (70.0%)
-SSL certificates valid: 9 (90.0%)
-Fully healthy domains: 7 (70.0%)
-Partially healthy domains: 2 (20.0%)
-Completely unhealthy domains: 1 (10.0%)
+Total domains: 21
+HTTP status OK: 17 (81.0%)
+HTTPS status OK: 17 (81.0%)
+SSL certificates valid: 20 (95.2%)
+Fully healthy domains: 17 (81.0%)
+Partially healthy domains: 3 (14.3%)
+Completely unhealthy domains: 1 (4.8%)
 
 DOMAINS WITH CERTIFICATES EXPIRING SOON:
 --------------------------------------------------------------------------------
 ⚠️ CRITICAL: facebook.com - ONLY 7 DAYS REMAINING (expires on 2025-04-25) ⚠️
+⚠️ CRITICAL: instagram.com - ONLY 7 DAYS REMAINING (expires on 2025-04-25) ⚠️
 --------------------------------------------------------------------------------
 
 Detailed results by domain:
@@ -23,8 +23,8 @@ Detailed results by domain:
    HTTP status: OK (Success rate: 100%)
    HTTPS status: OK (Success rate: 100%)
    SSL certificate: OK (Success rate: 100%)
-   Average HTTP response time: 0.26 seconds
-   Average HTTPS response time: 0.41 seconds
+   Average HTTP response time: 0.42 seconds
+   Average HTTPS response time: 0.57 seconds
    SSL expiry date: 2025-06-23
    Days remaining: 65 days
 
@@ -39,7 +39,7 @@ Detailed results by domain:
    HTTP status: OK (Success rate: 100%)
    HTTPS status: OK (Success rate: 100%)
    SSL certificate: OK (Success rate: 100%)
-   Average HTTP response time: 0.05 seconds
+   Average HTTP response time: 0.10 seconds
    Average HTTPS response time: 0.03 seconds
    SSL expiry date: 2026-02-05
    Days remaining: 293 days
@@ -55,8 +55,8 @@ Detailed results by domain:
    HTTP status: OK (Success rate: 100%)
    HTTPS status: OK (Success rate: 100%)
    SSL certificate: OK (Success rate: 100%)
-   Average HTTP response time: 0.63 seconds
-   Average HTTPS response time: 0.57 seconds
+   Average HTTP response time: 0.76 seconds
+   Average HTTPS response time: 0.74 seconds
    SSL expiry date: 2025-06-26
    Days remaining: 69 days
 
@@ -71,8 +71,8 @@ Detailed results by domain:
    HTTP status: FAIL (Success rate: 0%)
    HTTPS status: FAIL (Success rate: 0%)
    SSL certificate: OK (Success rate: 100%)
-   Average HTTP response time: 1.30 seconds
-   Average HTTPS response time: 1.01 seconds
+   Average HTTP response time: 1.38 seconds
+   Average HTTPS response time: 1.06 seconds
    SSL expiry date: 2025-07-27
    Days remaining: 100 days
 
@@ -83,26 +83,11 @@ Detailed results by domain:
    Test 4: HTTP: ✗, HTTPS: ✗, SSL: ✓
    Test 5: HTTP: ✗, HTTPS: ✗, SSL: ✓
 --------------------------------------------------------------------------------
-5. facebook.com
+5. microsoft.com
    HTTP status: OK (Success rate: 100%)
    HTTPS status: OK (Success rate: 100%)
    SSL certificate: OK (Success rate: 100%)
-   Average HTTP response time: 0.51 seconds
-   Average HTTPS response time: 0.53 seconds
-   SSL expiry date: 2025-04-25 (⚠️ CRITICAL: ONLY 7 DAYS REMAINING! ⚠️)
-
-   Individual test results:
-   Test 1: HTTP: ✓, HTTPS: ✓, SSL: ✓
-   Test 2: HTTP: ✓, HTTPS: ✓, SSL: ✓
-   Test 3: HTTP: ✓, HTTPS: ✓, SSL: ✓
-   Test 4: HTTP: ✓, HTTPS: ✓, SSL: ✓
-   Test 5: HTTP: ✓, HTTPS: ✓, SSL: ✓
---------------------------------------------------------------------------------
-6. microsoft.com
-   HTTP status: OK (Success rate: 100%)
-   HTTPS status: OK (Success rate: 100%)
-   SSL certificate: OK (Success rate: 100%)
-   Average HTTP response time: 0.10 seconds
+   Average HTTP response time: 0.34 seconds
    Average HTTPS response time: 0.07 seconds
    SSL expiry date: 2026-04-11
    Days remaining: 357 days
@@ -114,14 +99,14 @@ Detailed results by domain:
    Test 4: HTTP: ✓, HTTPS: ✓, SSL: ✓
    Test 5: HTTP: ✓, HTTPS: ✓, SSL: ✓
 --------------------------------------------------------------------------------
-7. apple.com
+6. apple.com
    HTTP status: OK (Success rate: 100%)
    HTTPS status: OK (Success rate: 100%)
    SSL certificate: OK (Success rate: 100%)
-   Average HTTP response time: 0.06 seconds
-   Average HTTPS response time: 0.06 seconds
+   Average HTTP response time: 0.08 seconds
+   Average HTTPS response time: 0.07 seconds
    SSL expiry date: 2025-06-05
-   Days remaining: 48 days
+   Days remaining: 47 days
 
    Individual test results:
    Test 1: HTTP: ✓, HTTPS: ✓, SSL: ✓
@@ -130,7 +115,7 @@ Detailed results by domain:
    Test 4: HTTP: ✓, HTTPS: ✓, SSL: ✓
    Test 5: HTTP: ✓, HTTPS: ✓, SSL: ✓
 --------------------------------------------------------------------------------
-8. invalid-domain-example123.com
+7. invalid-domain-example123.com
    HTTP status: FAIL (Success rate: 0%)
    HTTPS status: FAIL (Success rate: 0%)
    SSL certificate: FAIL (Success rate: 0%)
@@ -142,12 +127,12 @@ Detailed results by domain:
    Test 4: HTTP: ✗, HTTPS: ✗, SSL: ✗
    Test 5: HTTP: ✗, HTTPS: ✗, SSL: ✗
 --------------------------------------------------------------------------------
-9. youtube.com
+8. youtube.com
    HTTP status: OK (Success rate: 100%)
    HTTPS status: OK (Success rate: 100%)
    SSL certificate: OK (Success rate: 100%)
-   Average HTTP response time: 0.68 seconds
-   Average HTTPS response time: 0.54 seconds
+   Average HTTP response time: 0.67 seconds
+   Average HTTPS response time: 0.56 seconds
    SSL expiry date: 2025-06-23
    Days remaining: 65 days
 
@@ -158,14 +143,14 @@ Detailed results by domain:
    Test 4: HTTP: ✓, HTTPS: ✓, SSL: ✓
    Test 5: HTTP: ✓, HTTPS: ✓, SSL: ✓
 --------------------------------------------------------------------------------
-10. twitter.com
+9. twitter.com
    HTTP status: FAIL (Success rate: 0%)
    HTTPS status: FAIL (Success rate: 0%)
    SSL certificate: OK (Success rate: 100%)
-   Average HTTP response time: 0.65 seconds
-   Average HTTPS response time: 0.40 seconds
+   Average HTTP response time: 0.57 seconds
+   Average HTTPS response time: 0.39 seconds
    SSL expiry date: 2025-06-04
-   Days remaining: 47 days
+   Days remaining: 46 days
 
    Individual test results:
    Test 1: HTTP: ✗, HTTPS: ✗, SSL: ✓
@@ -173,4 +158,194 @@ Detailed results by domain:
    Test 3: HTTP: ✗, HTTPS: ✗, SSL: ✓
    Test 4: HTTP: ✗, HTTPS: ✗, SSL: ✓
    Test 5: HTTP: ✗, HTTPS: ✗, SSL: ✓
+--------------------------------------------------------------------------------
+10. naver.com
+   HTTP status: OK (Success rate: 100%)
+   HTTPS status: OK (Success rate: 100%)
+   SSL certificate: OK (Success rate: 100%)
+   Average HTTP response time: 0.08 seconds
+   Average HTTPS response time: 0.09 seconds
+   SSL expiry date: 2025-06-15
+   Days remaining: 57 days
+
+   Individual test results:
+   Test 1: HTTP: ✓, HTTPS: ✓, SSL: ✓
+   Test 2: HTTP: ✓, HTTPS: ✓, SSL: ✓
+   Test 3: HTTP: ✓, HTTPS: ✓, SSL: ✓
+   Test 4: HTTP: ✓, HTTPS: ✓, SSL: ✓
+   Test 5: HTTP: ✓, HTTPS: ✓, SSL: ✓
+--------------------------------------------------------------------------------
+11. facebook.com
+   HTTP status: OK (Success rate: 100%)
+   HTTPS status: OK (Success rate: 100%)
+   SSL certificate: OK (Success rate: 100%)
+   Average HTTP response time: 0.52 seconds
+   Average HTTPS response time: 0.50 seconds
+   SSL expiry date: 2025-04-25 (⚠️ CRITICAL: ONLY 7 DAYS REMAINING! ⚠️)
+
+   Individual test results:
+   Test 1: HTTP: ✓, HTTPS: ✓, SSL: ✓
+   Test 2: HTTP: ✓, HTTPS: ✓, SSL: ✓
+   Test 3: HTTP: ✓, HTTPS: ✓, SSL: ✓
+   Test 4: HTTP: ✓, HTTPS: ✓, SSL: ✓
+   Test 5: HTTP: ✓, HTTPS: ✓, SSL: ✓
+--------------------------------------------------------------------------------
+12. linkedin.com
+   HTTP status: OK (Success rate: 100%)
+   HTTPS status: OK (Success rate: 100%)
+   SSL certificate: OK (Success rate: 100%)
+   Average HTTP response time: 0.49 seconds
+   Average HTTPS response time: 0.49 seconds
+   SSL expiry date: 2025-09-16
+   Days remaining: 151 days
+
+   Individual test results:
+   Test 1: HTTP: ✓, HTTPS: ✓, SSL: ✓
+   Test 2: HTTP: ✓, HTTPS: ✓, SSL: ✓
+   Test 3: HTTP: ✓, HTTPS: ✓, SSL: ✓
+   Test 4: HTTP: ✓, HTTPS: ✓, SSL: ✓
+   Test 5: HTTP: ✓, HTTPS: ✓, SSL: ✓
+--------------------------------------------------------------------------------
+13. instagram.com
+   HTTP status: OK (Success rate: 100%)
+   HTTPS status: OK (Success rate: 100%)
+   SSL certificate: OK (Success rate: 100%)
+   Average HTTP response time: 0.88 seconds
+   Average HTTPS response time: 0.84 seconds
+   SSL expiry date: 2025-04-25 (⚠️ CRITICAL: ONLY 7 DAYS REMAINING! ⚠️)
+
+   Individual test results:
+   Test 1: HTTP: ✓, HTTPS: ✓, SSL: ✓
+   Test 2: HTTP: ✓, HTTPS: ✓, SSL: ✓
+   Test 3: HTTP: ✓, HTTPS: ✓, SSL: ✓
+   Test 4: HTTP: ✓, HTTPS: ✓, SSL: ✓
+   Test 5: HTTP: ✓, HTTPS: ✓, SSL: ✓
+--------------------------------------------------------------------------------
+14. reddit.com
+   HTTP status: OK (Success rate: 100%)
+   HTTPS status: OK (Success rate: 100%)
+   SSL certificate: OK (Success rate: 100%)
+   Average HTTP response time: 0.89 seconds
+   Average HTTPS response time: 1.06 seconds
+   SSL expiry date: 2025-08-25
+   Days remaining: 129 days
+
+   Individual test results:
+   Test 1: HTTP: ✓, HTTPS: ✓, SSL: ✓
+   Test 2: HTTP: ✓, HTTPS: ✓, SSL: ✓
+   Test 3: HTTP: ✓, HTTPS: ✓, SSL: ✓
+   Test 4: HTTP: ✓, HTTPS: ✓, SSL: ✓
+   Test 5: HTTP: ✓, HTTPS: ✓, SSL: ✓
+--------------------------------------------------------------------------------
+15. pinterest.com
+   HTTP status: OK (Success rate: 100%)
+   HTTPS status: OK (Success rate: 100%)
+   SSL certificate: OK (Success rate: 100%)
+   Average HTTP response time: 0.61 seconds
+   Average HTTPS response time: 0.82 seconds
+   SSL expiry date: 2025-08-07
+   Days remaining: 111 days
+
+   Individual test results:
+   Test 1: HTTP: ✓, HTTPS: ✓, SSL: ✓
+   Test 2: HTTP: ✓, HTTPS: ✓, SSL: ✓
+   Test 3: HTTP: ✓, HTTPS: ✓, SSL: ✓
+   Test 4: HTTP: ✓, HTTPS: ✓, SSL: ✓
+   Test 5: HTTP: ✓, HTTPS: ✓, SSL: ✓
+--------------------------------------------------------------------------------
+16. quora.com
+   HTTP status: OK (Success rate: 100%)
+   HTTPS status: OK (Success rate: 100%)
+   SSL certificate: OK (Success rate: 100%)
+   Average HTTP response time: 1.55 seconds
+   Average HTTPS response time: 1.13 seconds
+   SSL expiry date: 2025-06-05
+   Days remaining: 47 days
+
+   Individual test results:
+   Test 1: HTTP: ✓, HTTPS: ✓, SSL: ✓
+   Test 2: HTTP: ✓, HTTPS: ✓, SSL: ✓
+   Test 3: HTTP: ✓, HTTPS: ✓, SSL: ✓
+   Test 4: HTTP: ✓, HTTPS: ✓, SSL: ✓
+   Test 5: HTTP: ✓, HTTPS: ✓, SSL: ✓
+--------------------------------------------------------------------------------
+17. wikipedia.org
+   HTTP status: OK (Success rate: 100%)
+   HTTPS status: OK (Success rate: 100%)
+   SSL certificate: OK (Success rate: 100%)
+   Average HTTP response time: 0.66 seconds
+   Average HTTPS response time: 0.52 seconds
+   SSL expiry date: 2025-10-17
+   Days remaining: 182 days
+
+   Individual test results:
+   Test 1: HTTP: ✓, HTTPS: ✓, SSL: ✓
+   Test 2: HTTP: ✓, HTTPS: ✓, SSL: ✓
+   Test 3: HTTP: ✓, HTTPS: ✓, SSL: ✓
+   Test 4: HTTP: ✓, HTTPS: ✓, SSL: ✓
+   Test 5: HTTP: ✓, HTTPS: ✓, SSL: ✓
+--------------------------------------------------------------------------------
+18. bing.com
+   HTTP status: OK (Success rate: 100%)
+   HTTPS status: OK (Success rate: 100%)
+   SSL certificate: OK (Success rate: 100%)
+   Average HTTP response time: 0.13 seconds
+   Average HTTPS response time: 0.17 seconds
+   SSL expiry date: 2025-09-10
+   Days remaining: 145 days
+
+   Individual test results:
+   Test 1: HTTP: ✓, HTTPS: ✓, SSL: ✓
+   Test 2: HTTP: ✓, HTTPS: ✓, SSL: ✓
+   Test 3: HTTP: ✓, HTTPS: ✓, SSL: ✓
+   Test 4: HTTP: ✓, HTTPS: ✓, SSL: ✓
+   Test 5: HTTP: ✓, HTTPS: ✓, SSL: ✓
+--------------------------------------------------------------------------------
+19. yahoo.com
+   HTTP status: FAIL (Success rate: 0%)
+   HTTPS status: FAIL (Success rate: 0%)
+   SSL certificate: OK (Success rate: 100%)
+   Average HTTP response time: 1.09 seconds
+   Average HTTPS response time: 0.67 seconds
+   SSL expiry date: 2025-06-11
+   Days remaining: 54 days
+
+   Individual test results:
+   Test 1: HTTP: ✗, HTTPS: ✗, SSL: ✓
+   Test 2: HTTP: ✗, HTTPS: ✗, SSL: ✓
+   Test 3: HTTP: ✗, HTTPS: ✗, SSL: ✓
+   Test 4: HTTP: ✗, HTTPS: ✗, SSL: ✓
+   Test 5: HTTP: ✗, HTTPS: ✗, SSL: ✓
+--------------------------------------------------------------------------------
+20. baidu.com
+   HTTP status: OK (Success rate: 100%)
+   HTTPS status: OK (Success rate: 100%)
+   SSL certificate: OK (Success rate: 100%)
+   Average HTTP response time: 0.15 seconds
+   Average HTTPS response time: 0.43 seconds
+   SSL expiry date: 2026-03-03
+   Days remaining: 319 days
+
+   Individual test results:
+   Test 1: HTTP: ✓, HTTPS: ✓, SSL: ✓
+   Test 2: HTTP: ✓, HTTPS: ✓, SSL: ✓
+   Test 3: HTTP: ✓, HTTPS: ✓, SSL: ✓
+   Test 4: HTTP: ✓, HTTPS: ✓, SSL: ✓
+   Test 5: HTTP: ✓, HTTPS: ✓, SSL: ✓
+--------------------------------------------------------------------------------
+21. alibaba.com
+   HTTP status: OK (Success rate: 100%)
+   HTTPS status: OK (Success rate: 100%)
+   SSL certificate: OK (Success rate: 100%)
+   Average HTTP response time: 1.57 seconds
+   Average HTTPS response time: 0.98 seconds
+   SSL expiry date: 2026-04-12
+   Days remaining: 358 days
+
+   Individual test results:
+   Test 1: HTTP: ✓, HTTPS: ✓, SSL: ✓
+   Test 2: HTTP: ✓, HTTPS: ✓, SSL: ✓
+   Test 3: HTTP: ✓, HTTPS: ✓, SSL: ✓
+   Test 4: HTTP: ✓, HTTPS: ✓, SSL: ✓
+   Test 5: HTTP: ✓, HTTPS: ✓, SSL: ✓
 --------------------------------------------------------------------------------
