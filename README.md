@@ -51,4 +51,4 @@ down:
 
 ### Example output
 
-![Example Output](./domain_health_check_results.png)
+![Example Output](./domain_health_check_latest.png)

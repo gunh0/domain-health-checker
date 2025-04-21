@@ -1,6 +1,8 @@
+# visualization/plots.py
 import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
+import os
 from matplotlib.colors import LinearSegmentedColormap
 from datetime import datetime
 
@@ -77,7 +79,12 @@ def create_status_summary(ax, data):
 
 def create_health_pie_chart(ax, data):
     """Create the overall health pie chart."""
-    labels = ["All OK", "Partially OK", "All Failed"]
+    # Include count in labels for better readability
+    labels = [
+        f"All OK ({data['fully_healthy']})",
+        f"Partially OK ({data['partially_healthy']})",
+        f"All Failed ({data['unhealthy']})",
+    ]
     sizes = [data["fully_healthy"], data["partially_healthy"], data["unhealthy"]]
     colors = ["#4CAF50", "#FFC107", "#F44336"]
     explode = (0.1, 0, 0)
@@ -95,34 +102,44 @@ def create_health_pie_chart(ax, data):
     ax.set_title("Overall Health Status")
 
 
-def create_success_rate_chart(ax, results):
-    """Create the success rate horizontal bar chart."""
+def create_success_rate_chart(ax, results, max_domains_to_show=25):
+    """Create the success rate horizontal bar chart with dynamic sizing."""
     # Extract domain names and success rates
     domains = [r["domain"] for r in results]
     http_rates = [r["http_success_rate"] for r in results]
     https_rates = [r["https_success_rate"] for r in results]
     ssl_rates = [r["ssl_success_rate"] for r in results]
 
-    # Sort by average success rate
-    avg_success_rates = [
-        (d, (h + s + l) / 3)
-        for d, h, s, l in zip(domains, http_rates, https_rates, ssl_rates)
-    ]
-    avg_success_rates.sort(key=lambda x: x[1], reverse=True)
+    # Calculate average success rates
+    avg_rates = [(h + s + l) / 3 for h, s, l in zip(http_rates, https_rates, ssl_rates)]
 
-    sorted_domains = [item[0] for item in avg_success_rates]
-    sorted_http_rates = [
-        next(r["http_success_rate"] for r in results if r["domain"] == d)
-        for d in sorted_domains
-    ]
-    sorted_https_rates = [
-        next(r["https_success_rate"] for r in results if r["domain"] == d)
-        for d in sorted_domains
-    ]
-    sorted_ssl_rates = [
-        next(r["ssl_success_rate"] for r in results if r["domain"] == d)
-        for d in sorted_domains
-    ]
+    # Create data with domains and all rates
+    combined_data = list(zip(domains, avg_rates, http_rates, https_rates, ssl_rates))
+
+    # Sort by average success rate (highest first)
+    combined_data.sort(key=lambda x: x[1], reverse=True)
+
+    # Limit display if too many domains
+    if len(combined_data) > max_domains_to_show:
+        # Show only the max number of domains
+        display_data = combined_data[:max_domains_to_show]
+        truncated = True
+    else:
+        display_data = combined_data
+        truncated = False
+
+    # Unpack the data
+    sorted_domains = [item[0] for item in display_data]
+    sorted_avg_rates = [item[1] for item in display_data]
+    sorted_http_rates = [item[2] for item in display_data]
+    sorted_https_rates = [item[3] for item in display_data]
+    sorted_ssl_rates = [item[4] for item in display_data]
+
+    # Dynamic font size based on domain count
+    domain_count = len(sorted_domains)
+    fontsize = max(
+        7, 11 - (domain_count // 8)
+    )  # Decrease font size as domains increase
 
     # Create horizontal bars
     y_pos = np.arange(len(sorted_domains))
@@ -136,21 +153,39 @@ def create_success_rate_chart(ax, results):
         y_pos + bar_height, sorted_ssl_rates, bar_height, label="SSL", color="#009688"
     )
 
+    # Add average rate display
+    for i, avg_rate in enumerate(sorted_avg_rates):
+        ax.text(
+            102,  # Position just past the end of the bar
+            y_pos[i],
+            f"{avg_rate:.0f}%",
+            va="center",
+            ha="left",
+            fontweight="bold",
+            fontsize=fontsize,
+            color="#333333",
+        )
+
     ax.set_yticks(y_pos)
-    ax.set_yticklabels(sorted_domains)
-    ax.set_xlim(0, 105)
+    ax.set_yticklabels(sorted_domains, fontsize=fontsize)
+    ax.set_xlim(0, 110)  # Extended for average percentage
 
     # Add a vertical grid to help estimate percentages
     ax.grid(axis="x", linestyle="--", alpha=0.7)
     ax.set_xticks([0, 20, 40, 60, 80, 100])
 
-    ax.set_title("Success Rate by Domain")
+    title = "Success Rate by Domain (with Avg %)"
+    if truncated:
+        title += f" - Top {max_domains_to_show} of {len(combined_data)}"
+    ax.set_title(title)
     ax.set_xlabel("Success Rate (%)")
     ax.legend(loc="lower right")
 
+    return truncated, len(combined_data)
 
-def create_ssl_expiry_chart(ax, results):
-    """Create the SSL expiry heat map."""
+
+def create_ssl_expiry_chart(ax, results, max_domains_to_show=25):
+    """Create the SSL expiry heat map with dynamic sizing."""
     # Filter domains with valid SSL and sort by expiry
     ssl_valid_domains = [r for r in results if r["ssl_valid"] == "OK"]
     if not ssl_valid_domains:
@@ -163,13 +198,27 @@ def create_ssl_expiry_chart(ax, results):
             fontsize=14,
         )
         ax.set_title("Days Until SSL Certificate Expiry")
-        return
+        return False, 0
 
     ssl_valid_domains.sort(key=lambda x: x.get("days_until_expiry", 0))
+
+    # Limit display if too many domains
+    if len(ssl_valid_domains) > max_domains_to_show:
+        # Show the most critical ones (shortest expiry)
+        ssl_valid_domains = ssl_valid_domains[:max_domains_to_show]
+        truncated = True
+    else:
+        truncated = False
 
     # Prepare data for heatmap
     ssl_domains = [r["domain"] for r in ssl_valid_domains]
     days_left = [r.get("days_until_expiry", 0) for r in ssl_valid_domains]
+
+    # Dynamic font size based on domain count
+    domain_count = len(ssl_domains)
+    fontsize = max(
+        7, 11 - (domain_count // 8)
+    )  # Decrease font size as domains increase
 
     # Create custom colormap - green for long time, yellow for medium, red for expiring soon
     cmap = LinearSegmentedColormap.from_list(
@@ -197,7 +246,7 @@ def create_ssl_expiry_chart(ax, results):
         days_text = f"{days} days"
         text_color = "#4CAF50"  # Green (default)
         fontweight = "normal"
-        
+
         # Determine text color based on urgency
         if days <= 30:  # For soon expiring
             text_color = "#F44336"  # Red
@@ -211,7 +260,7 @@ def create_ssl_expiry_chart(ax, results):
             text_color = "#FFC107"  # Yellow/Amber
             days_text = f"{days} days"
             fontweight = "normal"
-        
+
         # Position the text to the right of the bar
         # Get the current axes width in data units
         x_lim = ax.get_xlim()[1]
@@ -229,7 +278,7 @@ def create_ssl_expiry_chart(ax, results):
             ha="left",
             color=text_color,
             fontweight=fontweight,
-            fontsize=10,
+            fontsize=fontsize,
             bbox=dict(
                 facecolor="white",
                 alpha=0.8,
@@ -238,8 +287,13 @@ def create_ssl_expiry_chart(ax, results):
             ),
         )
 
-    ax.set_title("Days Until SSL Certificate Expiry")
+    title = "Days Until SSL Certificate Expiry"
+    if truncated:
+        title += f" - Top {max_domains_to_show} Critical of {len(ssl_valid_domains)}"
+    ax.set_title(title)
     ax.set_xlabel("Days")
+    ax.set_yticks(range(len(ssl_domains)))
+    ax.set_yticklabels(ssl_domains, fontsize=fontsize)
 
     # Ensure x-axis is wide enough to show labels
     current_xlim = ax.get_xlim()
@@ -251,9 +305,27 @@ def create_ssl_expiry_chart(ax, results):
     cbar = plt.colorbar(sm, ax=ax)
     cbar.set_label("Expiry Urgency")
 
+    # Add threshold explanation text box
+    threshold_text = ("Red: Expiring soon")
 
-def create_response_time_chart(ax, results):
-    """Create the response time comparison chart."""
+    # Add text box in the upper right corner of the plot
+    props = dict(boxstyle="round", facecolor="white", alpha=0.9, edgecolor="gray")
+    ax.text(
+        0.98,
+        0.98,
+        threshold_text,
+        transform=ax.transAxes,
+        fontsize=8,
+        verticalalignment="top",
+        horizontalalignment="right",
+        bbox=props,
+    )
+
+    return truncated, len(ssl_valid_domains)
+
+
+def create_response_time_chart(ax, results, max_domains_to_show=40):
+    """Create the response time comparison chart with dynamic sizing."""
     # Get domains with response time data
     response_time_domains = [
         r
@@ -271,30 +343,44 @@ def create_response_time_chart(ax, results):
             fontsize=14,
         )
         ax.set_title("Average Response Time")
-        return
+        return False, 0
 
     # Sort by HTTP response time (if available)
     response_time_domains.sort(
         key=lambda x: x.get("avg_http_response_time", float("inf"))
     )
 
+    # Limit display if too many domains
+    if len(response_time_domains) > max_domains_to_show:
+        # Show only fastest domains
+        response_time_domains = response_time_domains[:max_domains_to_show]
+        truncated = True
+    else:
+        truncated = False
+
     domains_rt = [r["domain"] for r in response_time_domains]
-    
+
+    # Dynamic font size based on domain count
+    domain_count = len(domains_rt)
+    fontsize = max(
+        7, 11 - (domain_count // 10)
+    )  # Decrease font size as domains increase
+
     # Pre-process all times to ensure they are safe to use
     http_times = []
     https_times = []
-    
+
     for r in response_time_domains:
         # Get values with default of 0
         http_time = r.get("avg_http_response_time", 0)
         https_time = r.get("avg_https_response_time", 0)
-        
+
         # Convert None or non-numeric values to 0
         if http_time is None or not isinstance(http_time, (int, float)):
             http_time = 0
         if https_time is None or not isinstance(https_time, (int, float)):
             https_time = 0
-            
+
         http_times.append(float(http_time))
         https_times.append(float(https_time))
 
@@ -321,56 +407,162 @@ def create_response_time_chart(ax, results):
     # Add time text only for times > 0
     for i, (h, s) in enumerate(zip(http_times, https_times)):
         if h > 0:  # Simple check for positive value
-            ax.text(h + 0.05, i - bar_height / 2, f"{h:.2f}s", va="center")
+            ax.text(
+                h + 0.05,
+                i - bar_height / 2,
+                f"{h:.2f}s",
+                va="center",
+                fontsize=fontsize,
+            )
         if s > 0:  # Simple check for positive value
-            ax.text(s + 0.05, i + bar_height / 2, f"{s:.2f}s", va="center")
+            ax.text(
+                s + 0.05,
+                i + bar_height / 2,
+                f"{s:.2f}s",
+                va="center",
+                fontsize=fontsize,
+            )
 
     ax.set_yticks(y_pos)
-    ax.set_yticklabels(domains_rt)
-    ax.set_title("Average Response Time (seconds)")
+    ax.set_yticklabels(domains_rt, fontsize=fontsize)
+
+    title = "Average Response Time (seconds)"
+    if truncated:
+        title += f" - Top {max_domains_to_show} of {len(response_time_domains)}"
+    ax.set_title(title)
     ax.set_xlabel("Time (seconds)")
     ax.legend()
 
+    # Add explanation for percentage differences
+    ax.text(
+        0.98,
+        0.02,
+        "Note: Percentages show HTTPS speed difference vs HTTP\n(negative = faster, positive = slower)",
+        transform=ax.transAxes,
+        fontsize=8,
+        ha="right",
+        va="bottom",
+        bbox=dict(facecolor="white", alpha=0.8, boxstyle="round,pad=0.2"),
+    )
 
-def generate_plots(results):
-    """Generate visualizations of domain health check results."""
+    return truncated, len(response_time_domains)
+
+
+def generate_plots(results, output_dir="results"):
+    """
+    Generate visualizations of domain health check results with dynamic sizing.
+
+    Parameters:
+        results (list): List of domain check results
+        output_dir (str): Directory to save output files
+
+    Returns:
+        dict: Statistics about the results for reporting
+    """
+    # Create output directory if it doesn't exist
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
+
     # Prepare data
     data = prepare_data(results)
     total_domains = data["total_domains"]
 
-    # Create a figure with subplots
-    fig = plt.figure(figsize=(15, 12))
+    # Dynamically calculate figure height based on domain count
+    # More aggressive scaling for larger domain counts
+    base_height = 12
+    if total_domains <= 15:
+        fig_height = base_height
+    elif total_domains <= 30:
+        fig_height = base_height + (total_domains - 15) * 0.4
+    elif total_domains <= 50:
+        fig_height = base_height + 6 + (total_domains - 30) * 0.5
+    else:
+        fig_height = base_height + 16 + (total_domains - 50) * 0.3
+
+    # Cap maximum height to prevent excessively tall figures
+    fig_height = min(fig_height, 36)
+
+    # Create a figure with dynamic height
+    fig = plt.figure(figsize=(15, fig_height))
     fig.suptitle(
         f"Domain Health Check Results (Total: {total_domains} domains)", fontsize=16
     )
 
-    # 1. Summary bar chart
-    ax1 = plt.subplot(3, 2, 1)
-    create_status_summary(ax1, data)
+    # Adjust the grid layout based on domain count
+    # For many domains, use a more vertical layout
+    if total_domains > 40:
+        # Use a 4x2 grid for many domains
+        ax1 = plt.subplot(5, 2, 1)  # Status summary (top left)
+        ax2 = plt.subplot(5, 2, 2)  # Health pie chart (top right)
+        ax3 = plt.subplot(5, 2, (3, 5))  # Success rates (left middle, spanning 3 rows)
+        ax4 = plt.subplot(5, 2, (4, 6))  # SSL expiry (right middle, spanning 3 rows)
+        ax5 = plt.subplot(
+            5, 1, 4
+        )  # Response time (bottom, full width, spanning 2 rows)
+    else:
+        # Use standard 3x2 grid for fewer domains
+        ax1 = plt.subplot(3, 2, 1)
+        ax2 = plt.subplot(3, 2, 2)
+        ax3 = plt.subplot(3, 2, 3)
+        ax4 = plt.subplot(3, 2, 4)
+        ax5 = plt.subplot(3, 1, 3)
 
-    # 2. Pie chart for overall health
-    ax2 = plt.subplot(3, 2, 2)
+    # Create the charts
+    create_status_summary(ax1, data)
     create_health_pie_chart(ax2, data)
 
-    # 3. Success rates horizontal bar chart
-    ax3 = plt.subplot(3, 2, 3)
-    create_success_rate_chart(ax3, results)
+    # Calculate max domains to show based on figure height
+    # Use a more aggressive scaling to show more domains in taller figures
+    max_success_domains = max(10, int(fig_height * 2.5))
+    max_ssl_domains = max(10, int(fig_height * 2.5))
+    max_response_domains = max(15, int(fig_height * 3.5))
 
-    # 4. SSL expiry heat map
-    ax4 = plt.subplot(3, 2, 4)
-    create_ssl_expiry_chart(ax4, results)
+    success_truncated, total_success_domains = create_success_rate_chart(
+        ax3, results, max_success_domains
+    )
+    ssl_truncated, total_ssl_domains = create_ssl_expiry_chart(
+        ax4, results, max_ssl_domains
+    )
+    response_truncated, total_response_domains = create_response_time_chart(
+        ax5, results, max_response_domains
+    )
 
-    # 5. Response time comparison chart
-    ax5 = plt.subplot(3, 1, 3)
-    create_response_time_chart(ax5, results)
+    # Adjust layout with more padding for larger domain counts
+    if total_domains > 30:
+        plt.tight_layout(rect=[0, 0.03, 1, 0.95], h_pad=3.0, w_pad=2.0)
+    else:
+        plt.tight_layout(rect=[0, 0.03, 1, 0.95])
 
-    plt.tight_layout(rect=[0, 0.03, 1, 0.95])
+    # Save the plot with timestamp and a generic latest version
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    filename = f"{output_dir}/domain_health_check_{timestamp}.png"
+    latest_filename = f"{output_dir}/domain_health_check_latest.png"
 
-    # Save the plot with a generic filename
-    filename = "domain_health_check_results.png"
     plt.savefig(filename, dpi=300, bbox_inches="tight")
+    plt.savefig(latest_filename, dpi=300, bbox_inches="tight")
 
-    print(f"Results image saved as '{filename}'")
+    print(f"Results image saved as '{filename}' and '{latest_filename}'")
+
+    # Always create detailed charts when domain count is high
+    if total_domains > 30:
+        print("Creating additional detailed charts for better visibility...")
+
+        # Create success rate chart with all domains
+        create_detailed_success_chart(
+            results, f"{output_dir}/success_rates_detail_{timestamp}.png"
+        )
+
+        # Create SSL expiry chart with all domains if there are any valid SSL domains
+        if total_ssl_domains > 0:
+            create_detailed_ssl_chart(
+                results, f"{output_dir}/ssl_expiry_detail_{timestamp}.png"
+            )
+
+        # Create response time chart with all domains if there is response time data
+        if total_response_domains > 0:
+            create_detailed_response_chart(
+                results, f"{output_dir}/response_times_detail_{timestamp}.png"
+            )
 
     # Return data for the text report
     return {
@@ -382,3 +574,136 @@ def generate_plots(results):
         "partially_healthy": data["partially_healthy"],
         "unhealthy": data["unhealthy"],
     }
+
+
+def create_detailed_response_chart(results, filename):
+    """Create a detailed response time chart showing all domains with response time data."""
+    # Get domains with response time data
+    response_time_domains = [
+        r
+        for r in results
+        if "avg_http_response_time" in r or "avg_https_response_time" in r
+    ]
+
+    if not response_time_domains:
+        return  # No response time data to display
+
+    # Sort by HTTP response time (if available)
+    response_time_domains.sort(
+        key=lambda x: x.get("avg_http_response_time", float("inf"))
+    )
+
+    # Create larger figure for detailed view
+    height_per_domain = 0.4  # Inches per domain
+    min_height = 10  # Minimum height in inches
+    height = max(min_height, len(results) * height_per_domain)
+    fig, ax = plt.subplots(figsize=(15, height))
+
+    domains_rt = [r["domain"] for r in response_time_domains]
+
+    # Calculate font size based on domain count
+    domain_count = len(domains_rt)
+    fontsize = max(6, 9 - (domain_count // 30))
+
+    # Pre-process all times to ensure they are safe to use
+    http_times = []
+    https_times = []
+
+    for r in response_time_domains:
+        # Get values with default of 0
+        http_time = r.get("avg_http_response_time", 0)
+        https_time = r.get("avg_https_response_time", 0)
+
+        # Convert None or non-numeric values to 0
+        if http_time is None or not isinstance(http_time, (int, float)):
+            http_time = 0
+        if https_time is None or not isinstance(https_time, (int, float)):
+            https_time = 0
+
+        http_times.append(float(http_time))
+        https_times.append(float(https_time))
+
+    # Create positions
+    y_pos = np.arange(len(domains_rt))
+    bar_height = 0.3
+
+    # Create bars
+    ax.barh(
+        y_pos - bar_height / 2,
+        http_times,
+        bar_height,
+        label="HTTP",
+        color="#2196F3",
+    )
+    ax.barh(
+        y_pos + bar_height / 2,
+        https_times,
+        bar_height,
+        label="HTTPS",
+        color="#673AB7",
+    )
+
+    # Add time text only for times > 0
+    for i, (h, s) in enumerate(zip(http_times, https_times)):
+        if h > 0:  # Simple check for positive value
+            ax.text(
+                h + 0.05,
+                i - bar_height / 2,
+                f"{h:.2f}s",
+                va="center",
+                fontsize=fontsize,
+            )
+        if s > 0:  # Simple check for positive value
+            ax.text(
+                s + 0.05,
+                i + bar_height / 2,
+                f"{s:.2f}s",
+                va="center",
+                fontsize=fontsize,
+            )
+
+    # Add comparison between HTTP and HTTPS times
+    for i, (h, s) in enumerate(zip(http_times, https_times)):
+        if h > 0 and s > 0:  # Only if both have values
+            diff_pct = ((s - h) / h) * 100  # Percentage difference
+            diff_text = f"{diff_pct:+.1f}%"  # + sign for increase, - for decrease
+            diff_color = (
+                "#F44336" if diff_pct > 0 else "#4CAF50"
+            )  # Red if slower, green if faster
+
+            # Add text showing the difference
+            text_x = max(h, s) + 0.3
+            ax.text(
+                text_x,
+                y_pos[i],
+                diff_text,
+                va="center",
+                ha="left",
+                color=diff_color,
+                fontweight="bold",
+                fontsize=fontsize,
+                bbox=dict(facecolor="white", alpha=0.8, boxstyle="round,pad=0.2"),
+            )
+
+    ax.set_yticks(y_pos)
+    ax.set_yticklabels(domains_rt, fontsize=fontsize)
+    ax.set_title(f"Average Response Time (seconds) - All {len(domains_rt)} Domains")
+    ax.set_xlabel("Time (seconds)")
+    ax.legend()
+
+    # Add explanation for percentage differences
+    ax.text(
+        0.98,
+        0.02,
+        "Note: Percentages show HTTPS speed difference vs HTTP\n(negative = faster, positive = slower)",
+        transform=ax.transAxes,
+        fontsize=8,
+        ha="right",
+        va="bottom",
+        bbox=dict(facecolor="white", alpha=0.8, boxstyle="round,pad=0.2"),
+    )
+
+    # Save the detailed chart
+    plt.tight_layout()
+    plt.savefig(filename, dpi=300, bbox_inches="tight")
+    print(f"Detailed response time chart saved as '{filename}'")

@@ -1,7 +1,3 @@
-google.com
-github.com
-stackoverflow.com
-amazon.com
 microsoft.com
 apple.com
 invalid-domain-example123.com
